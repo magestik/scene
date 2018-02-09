@@ -1,0 +1,9 @@
+
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+if (is_multi_config)
+    include("@EXPORT_PATH@/scene-targets.cmake")
+else(is_multi_config)
+    include("@EXPORT_PATH@/${CMAKE_BUILD_TYPE}/scene-targets.cmake")
+endif(is_multi_config)
+

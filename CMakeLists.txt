@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.9)
 
-project(scene)
+project(Scene)
 
 enable_testing()
 
@@ -21,4 +21,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address ")
 
 add_subdirectory(src)
+
+# Export / Install
+
+set(EXPORT_PATH "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "Export path")
+
+configure_file(SceneConfig.cmake.in "${EXPORT_PATH}/SceneConfig.cmake")
+
+get_property(is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+if (is_multi_config)
+    export(TARGETS scene containers linear-algebra FILE "${EXPORT_PATH}/scene-targets.cmake")
+else(is_multi_config)
+    export(TARGETS scene containers linear-algebra FILE "${EXPORT_PATH}/${CMAKE_BUILD_TYPE}/scene-targets.cmake")
+endif(is_multi_config)
+
 
