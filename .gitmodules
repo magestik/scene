@@ -1,0 +1,6 @@
+[submodule "external/containers"]
+	path = external/containers
+	url = https://github.com/magestik/containers
+[submodule "external/linear-algebra"]
+	path = external/linear-algebra
+	url = https://github.com/magestik/linear-algebra
