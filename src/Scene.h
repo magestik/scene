@@ -16,6 +16,8 @@ public:
 
 	bool registerListener(SceneListener * listener);
 
+	bool import(const char * szFilename);
+
 	bool insert(const Object & object);
 	bool remove(const Object & object);
 

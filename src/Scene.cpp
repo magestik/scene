@@ -2,6 +2,8 @@
 
 #include "SceneListener.h"
 
+#include "Importer/Importer.h"
+
 /**
  * @brief Scene::Scene
  */
@@ -27,6 +29,17 @@ bool Scene::registerListener(SceneListener * listener)
 {
 	m_aListeners.push_back(listener);
 	return(true);
+}
+
+/**
+ * @brief Scene::import
+ * @param szFilename
+ * @return
+ */
+bool Scene::import(const char * szFilename)
+{
+	Importer importer(szFilename);
+	return(importer.importToScene(*this));
 }
 
 /**
