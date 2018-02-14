@@ -4,6 +4,8 @@
 #include "Camera/Camera.h"
 #include "Light/Light.h"
 
+#include "ResourceManager.h"
+
 #include <vector>
 
 class SceneListener;
@@ -35,6 +37,11 @@ public:
 		return(m_aObjects.size());
 	}
 
+	inline ResourceManager & getResourceManager(void)
+	{
+		return(m_resourcesManager);
+	}
+
 private:
 
 	void onObjectInserted(const Object & object) const;
@@ -48,6 +55,8 @@ public: //private:
 	Light::Directionnal * m_pLight;
 
 private:
+
+	ResourceManager m_resourcesManager;
 
 	std::vector<Camera> m_aCameras;
 	std::vector<Object> m_aObjects;
