@@ -35,7 +35,7 @@ bool ResourceManager::registerListener(ResourceManagerListener * listener)
  */
 unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat)
 {
-	unsigned int MeshID = m_iMeshCount;
+	unsigned int MeshID = 1 + m_iMeshCount;
 
 	onMeshImported(MeshID, vertexCount, vertices, vertexFormat);
 
@@ -50,7 +50,7 @@ unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** ver
  */
 unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat, unsigned int indexCount, void * indexes, IndexFormat indexFormat)
 {
-	unsigned int MeshID = m_iMeshCount;
+	unsigned int MeshID = 1 + m_iMeshCount;
 
 	onMeshImported(MeshID, vertexCount, vertices, vertexFormat, indexCount, indexes, indexFormat);
 
@@ -65,7 +65,7 @@ unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** ver
  */
 unsigned int ResourceManager::registerTexture(unsigned int width, void * data, TexelFormat texelFormat)
 {
-	unsigned int TextureID = m_iTextureCount;
+	unsigned int TextureID = 1 + m_iTextureCount;
 
 	onTextureImported(TextureID, width, data, texelFormat);
 
@@ -80,7 +80,7 @@ unsigned int ResourceManager::registerTexture(unsigned int width, void * data, T
  */
 unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int height, void * data, TexelFormat texelFormat)
 {
-	unsigned int TextureID = m_iTextureCount;
+	unsigned int TextureID = 1 + m_iTextureCount;
 
 	onTextureImported(TextureID, width, height, data, texelFormat);
 
@@ -95,7 +95,7 @@ unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int h
  */
 unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int height, unsigned int depth, void * data, TexelFormat texelFormat)
 {
-	unsigned int TextureID = m_iTextureCount;
+	unsigned int TextureID = 1 + m_iTextureCount;
 
 	onTextureImported(TextureID, width, height, depth, data, texelFormat);
 
