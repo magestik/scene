@@ -77,6 +77,40 @@ bool Scene::remove(const Object & object)
 }
 
 /**
+ * @brief Scene::insert
+ * @param camera
+ * @return
+ */
+bool Scene::insert(const Camera & camera)
+{
+	m_aCameras.push_back(camera);
+	onCameraInserted(camera);
+	return(true);
+}
+
+/**
+ * @brief Scene::remove
+ * @param camera
+ * @return
+ */
+bool Scene::remove(const Camera & camera)
+{
+	for (std::vector<Camera>::iterator it = m_aCameras.begin() ; it != m_aCameras.end(); ++it)
+	{
+		const Camera & current = *it;
+
+		if (&current == &camera)
+		{
+			m_aCameras.erase(it);
+			onCameraRemoved(camera);
+			return(true);
+		}
+	}
+
+	return(false);
+}
+
+/**
  * @brief Scene::onObjectInserted
  */
 void Scene::onObjectInserted(const Object & object) const
@@ -95,5 +129,29 @@ void Scene::onObjectRemoved(const Object & object) const
 	for (SceneListener * listener : m_aListeners)
 	{
 		listener->onObjectRemoved(*this, object);
+	}
+}
+
+/**
+ * @brief Scene::onCameraInserted
+ * @param object
+ */
+void Scene::onCameraInserted(const Camera & camera) const
+{
+	for (SceneListener * listener : m_aListeners)
+	{
+		listener->onCameraInserted(*this, camera);
+	}
+}
+
+/**
+ * @brief Scene::onCameraRemoved
+ * @param object
+ */
+void Scene::onCameraRemoved(const Camera & camera) const
+{
+	for (SceneListener * listener : m_aListeners)
+	{
+		listener->onCameraRemoved(*this, camera);
 	}
 }
