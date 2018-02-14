@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Object.h"
-#include "Camera/Camera.h"
-#include "Light/Light.h"
+#include "Objects/Object.h"
+#include "Objects/Camera/Camera.h"
+#include "Objects/Light/Light.h"
 
-#include "ResourceManager.h"
+#include "Resources/ResourceManager.h"
 
 #include <vector>
 

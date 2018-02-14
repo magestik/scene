@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.9)
 
 set(SCENE_FILES Scene.cpp Scene.h SceneListener.h)
-set(RESOURCE_MANAGER_FILES ResourceManager.cpp ResourceManager.h ResourceManagerListener.h ResourceFormats.h)
-set(OBJECT_FILES Object.cpp Object.h)
-set(LIGHT_FILES Light/Light.cpp Light/Light.h Light/Directionnal.cpp Light/Directionnal.h Light/Omni.cpp Light/Omni.h Light/Spot.cpp Light/Spot.h)
-set(CAMERA_FILES Camera/Camera.cpp Camera/Camera.h)
+set(RESOURCE_MANAGER_FILES Resources/ResourceManager.cpp Resources/ResourceManager.h Resources/ResourceManagerListener.h Resources/ResourceFormats.h)
+set(OBJECT_FILES Objects/Object.cpp Objects/Object.h)
+set(LIGHT_FILES Objects/Light/Light.cpp Objects/Light/Light.h Objects/Light/Directionnal.cpp Objects/Light/Directionnal.h Objects/Light/Omni.cpp Objects/Light/Omni.h Objects/Light/Spot.cpp Objects/Light/Spot.h)
+set(CAMERA_FILES Objects/Camera/Camera.cpp Objects/Camera/Camera.h)
 
 set(IMPORTER_FILES Importer/Importer.cpp Importer/Importer.h)
 
