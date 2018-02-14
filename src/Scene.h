@@ -52,7 +52,7 @@ private:
 
 public: //private:
 
-	Light::Directionnal * m_pLight;
+	Light::Directionnal * m_pLight; // TODO : remove this
 
 private:
 

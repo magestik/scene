@@ -17,7 +17,7 @@ Scene::Scene(void)
  */
 Scene::~Scene(void)
 {
-	// ...
+	delete m_pLight;
 }
 
 /**

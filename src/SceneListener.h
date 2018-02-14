@@ -6,7 +6,6 @@ class Camera;
 
 class SceneListener
 {
-
 public:
 
 	virtual void onObjectInserted	(const Scene & scene, const Object & object) = 0;
