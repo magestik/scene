@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "ResourceFormats.h"
+#include "ResourceData.h"
 
 class ResourceManagerListener;
 
@@ -15,21 +15,21 @@ public:
 
 	bool registerListener(ResourceManagerListener * listener);
 
-	unsigned int registerMesh		(unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat);
-	unsigned int registerMesh		(unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat, unsigned int indexCount, void * indexes, IndexFormat indexFormat);
+	unsigned int registerMesh		(const VertexData & vertexData);
+	unsigned int registerMesh		(const VertexData & vertexData, const IndexData & indexData);
 
-	unsigned int registerTexture	(unsigned int width, void * data, TexelFormat texelFormat);
-	unsigned int registerTexture	(unsigned int width, unsigned int height, void * data, TexelFormat texelFormat);
-	unsigned int registerTexture	(unsigned int width, unsigned int height, unsigned int depth, void * data, TexelFormat texelFormat);
+	unsigned int registerTexture	(const TextureData1D & textureData);
+	unsigned int registerTexture	(const TextureData2D & textureData);
+	unsigned int registerTexture	(const TextureData3D & textureData);
 
 private:
 
-	void onMeshImported(unsigned int MeshID, unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat) const;
-	void onMeshImported(unsigned int MeshID, unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat, unsigned int indexCount, void * indexes, IndexFormat indexFormat) const;
+	void onMeshImported(unsigned int MeshID, const VertexData & vertexData) const;
+	void onMeshImported(unsigned int MeshID, const VertexData & vertexData, const IndexData & indexData) const;
 
-	void onTextureImported(unsigned int TextureID, unsigned int width, void * data, TexelFormat texelFormat) const;
-	void onTextureImported(unsigned int TextureID, unsigned int width, unsigned int height, void * data, TexelFormat texelFormat) const;
-	void onTextureImported(unsigned int TextureID, unsigned int width, unsigned int height, unsigned int depth, void * data, TexelFormat texelFormat) const;
+	void onTextureImported(unsigned int TextureID, const TextureData1D & textureData) const;
+	void onTextureImported(unsigned int TextureID, const TextureData2D & textureData) const;
+	void onTextureImported(unsigned int TextureID, const TextureData3D & textureData) const;
 
 private:
 

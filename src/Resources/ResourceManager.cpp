@@ -33,11 +33,11 @@ bool ResourceManager::registerListener(ResourceManagerListener * listener)
  * @brief ResourceManager::registerMesh
  * @return
  */
-unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat)
+unsigned int ResourceManager::registerMesh(const VertexData & vertexData)
 {
 	unsigned int MeshID = 1 + m_iMeshCount;
 
-	onMeshImported(MeshID, vertexCount, vertices, vertexFormat);
+	onMeshImported(MeshID, vertexData);
 
 	++m_iMeshCount;
 
@@ -48,11 +48,11 @@ unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** ver
  * @brief ResourceManager::registerMesh
  * @return
  */
-unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat, unsigned int indexCount, void * indexes, IndexFormat indexFormat)
+unsigned int ResourceManager::registerMesh(const VertexData & vertexData, const IndexData & indexData)
 {
 	unsigned int MeshID = 1 + m_iMeshCount;
 
-	onMeshImported(MeshID, vertexCount, vertices, vertexFormat, indexCount, indexes, indexFormat);
+	onMeshImported(MeshID, vertexData, indexData);
 
 	++m_iMeshCount;
 
@@ -63,11 +63,11 @@ unsigned int ResourceManager::registerMesh(unsigned int vertexCount, void ** ver
  * @brief ResourceManager::registerTexture
  * @return
  */
-unsigned int ResourceManager::registerTexture(unsigned int width, void * data, TexelFormat texelFormat)
+unsigned int ResourceManager::registerTexture(const TextureData1D & textureData)
 {
 	unsigned int TextureID = 1 + m_iTextureCount;
 
-	onTextureImported(TextureID, width, data, texelFormat);
+	onTextureImported(TextureID, textureData);
 
 	++m_iTextureCount;
 
@@ -78,11 +78,11 @@ unsigned int ResourceManager::registerTexture(unsigned int width, void * data, T
  * @brief ResourceManager::registerTexture
  * @return
  */
-unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int height, void * data, TexelFormat texelFormat)
+unsigned int ResourceManager::registerTexture(const TextureData2D & textureData)
 {
 	unsigned int TextureID = 1 + m_iTextureCount;
 
-	onTextureImported(TextureID, width, height, data, texelFormat);
+	onTextureImported(TextureID, textureData);
 
 	++m_iTextureCount;
 
@@ -93,11 +93,11 @@ unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int h
  * @brief ResourceManager::registerTexture
  * @return
  */
-unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int height, unsigned int depth, void * data, TexelFormat texelFormat)
+unsigned int ResourceManager::registerTexture(const TextureData3D & textureData)
 {
 	unsigned int TextureID = 1 + m_iTextureCount;
 
-	onTextureImported(TextureID, width, height, depth, data, texelFormat);
+	onTextureImported(TextureID, textureData);
 
 	++m_iTextureCount;
 
@@ -107,54 +107,54 @@ unsigned int ResourceManager::registerTexture(unsigned int width, unsigned int h
 /**
  * @brief Scene::onMeshImported
  */
-void ResourceManager::onMeshImported(unsigned int MeshID, unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat) const
+void ResourceManager::onMeshImported(unsigned int MeshID, const VertexData & vertexData) const
 {
 	for (ResourceManagerListener * listener : m_aListeners)
 	{
-		listener->onMeshImported(*this, MeshID, vertexCount, vertices, vertexFormat);
+		listener->onMeshImported(*this, MeshID, vertexData);
 	}
 }
 
 /**
  * @brief Scene::onMeshImported
  */
-void ResourceManager::onMeshImported(unsigned int MeshID, unsigned int vertexCount, void ** vertices, VertexFormat vertexFormat, unsigned int indexCount, void * indexes, IndexFormat indexFormat) const
+void ResourceManager::onMeshImported(unsigned int MeshID, const VertexData & vertexData, const IndexData & indexData) const
 {
 	for (ResourceManagerListener * listener : m_aListeners)
 	{
-		listener->onMeshImported(*this, MeshID, vertexCount, vertices, vertexFormat, indexCount, indexes, indexFormat);
+		listener->onMeshImported(*this, MeshID, vertexData, indexData);
 	}
 }
 
 /**
  * @brief Scene::onTextureImported
  */
-void ResourceManager::onTextureImported(unsigned int TextureID, unsigned int width, void * data, TexelFormat texelFormat) const
+void ResourceManager::onTextureImported(unsigned int TextureID, const TextureData1D & textureData) const
 {
 	for (ResourceManagerListener * listener : m_aListeners)
 	{
-		listener->onTextureImported(*this, TextureID, width, data, texelFormat);
+		listener->onTextureImported(*this, TextureID, textureData);
 	}
 }
 
 /**
  * @brief Scene::onTextureImported
  */
-void ResourceManager::onTextureImported(unsigned int TextureID, unsigned int width, unsigned int height, void * data, TexelFormat texelFormat) const
+void ResourceManager::onTextureImported(unsigned int TextureID, const TextureData2D & textureData) const
 {
 	for (ResourceManagerListener * listener : m_aListeners)
 	{
-		listener->onTextureImported(*this, TextureID, width, height, data, texelFormat);
+		listener->onTextureImported(*this, TextureID, textureData);
 	}
 }
 
 /**
  * @brief Scene::onTextureImported
  */
-void ResourceManager::onTextureImported(unsigned int TextureID, unsigned int width, unsigned int height, unsigned int depth, void * data, TexelFormat texelFormat) const
+void ResourceManager::onTextureImported(unsigned int TextureID, const TextureData3D & textureData) const
 {
 	for (ResourceManagerListener * listener : m_aListeners)
 	{
-		listener->onTextureImported(*this, TextureID, width, height, depth, data, texelFormat);
+		listener->onTextureImported(*this, TextureID, textureData);
 	}
 }

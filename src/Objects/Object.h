@@ -3,11 +3,11 @@
 #include <Vector.h>
 #include <Matrix.h>
 
-class Mesh;
+#include <vector>
 
 struct Object
 {
-	Object(Mesh * m) : transformation(1.0f), mesh(m) { /* ... */ }
+	Object(void) : transformation(1.0f), MeshIDs() { /* ... */ }
 	mat4x4 transformation;
-	Mesh * mesh;
+	std::vector<unsigned int> MeshIDs;
 };

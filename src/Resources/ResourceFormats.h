@@ -1,16 +1,20 @@
 #pragma once
 
-enum VertexFormat
+enum TexelFormat
 {
-	DEFAULT_VERTEX_FORMAT = 0
+	TEXEL_FORMAT_RGBA8 = 0
 };
 
 enum IndexFormat
 {
-	DEFAULT_INDEX_FORMAT = 0
+	INDEX_FORMAT_UINT16 = 16,
+	INDEX_FORMAT_UINT32 = 32
 };
 
-enum TexelFormat
+enum VertexFormat
 {
-	DEFAULT_TEXEL_FORMAT = 0
+	VERTEX_FORMAT_FLOAT,
+	VERTEX_FORMAT_FLOAT2,
+	VERTEX_FORMAT_FLOAT3,
+	VERTEX_FORMAT_FLOAT4,
 };
