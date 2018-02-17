@@ -287,7 +287,7 @@ bool Importer::importMeshes(Scene & scene)
 		if (mesh->HasFaces())
 		{
 			std::vector<unsigned int> indices;
-			indices.reserve(mesh->mNumFaces);
+			indices.reserve(mesh->mNumFaces*3);
 
 			// Populate the index buffer
 			for (unsigned int j = 0; j < mesh->mNumFaces; ++j)
@@ -299,7 +299,7 @@ bool Importer::importMeshes(Scene & scene)
 			}
 
 			IndexData indexData;
-			indexData.indexCount = mesh->mNumFaces;
+			indexData.indexCount = indices.size();
 			indexData.indexFormat = INDEX_FORMAT_UINT32;
 			indexData.indices = indices.data();
 
