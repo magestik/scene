@@ -196,7 +196,6 @@ bool Importer::importMaterials(Scene & scene)
 		for (aiTextureType type : aSupportedTextureTypes)
 		{
 			aiString str;
-
 			material->GetTexture(type, 0, &str);
 
 			FIBITMAP * dib = FreeImage_Load(FIF_PNG, str.C_Str());
@@ -337,7 +336,7 @@ bool Importer::importMeshes(Scene & scene)
  * @param parentTransformation
  * @param scene
  */
-static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformation, const std::vector<unsigned int> aMeshIDs, Scene & scene)
+static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformation, const std::vector<unsigned int> aMeshIDs, const std::vector<unsigned int> aTextureIDs, const aiScene * pLoadedScene, Scene & scene)
 {
 	const mat4x4 transformation = parentTransformation * ASSIMP_MAT4X4(nd->mTransformation);
 
@@ -347,14 +346,53 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 
 	for (int i = 0; i < nd->mNumMeshes; ++i)
 	{
-		instance.MeshIDs.push_back(aMeshIDs[nd->mMeshes[i]]);
+		const unsigned int meshIndex = nd->mMeshes[i];
+		aiMesh * pLoadedMesh = pLoadedScene->mMeshes[meshIndex];
+
+		const unsigned int materialIndex = pLoadedMesh->mMaterialIndex;
+		aiMaterial * pLoadedMaterial = pLoadedScene->mMaterials[materialIndex];
+
+		Object::Mesh mesh;
+		mesh.MeshID = aMeshIDs[meshIndex];
+
+		//
+		// Diffuse Texture
+		{
+			aiString str;
+			pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+			mesh.DiffuseMapID = 0; // FIXME
+		}
+
+		//
+		// Specular Texture
+		{
+			aiString str;
+			pLoadedMaterial->GetTexture(aiTextureType_SPECULAR, 0, &str);
+			mesh.SpecularMapID = 0; // FIXME
+		}
+
+		//
+		// Shininess
+		{
+			mesh.shininess = 0.0f; // FIXME
+		}
+
+		//
+		// Specular Texture
+		{
+			aiString str;
+			pLoadedMaterial->GetTexture(aiTextureType_NORMALS, 0, &str);
+			mesh.NormalMapID = 0; // FIXME
+		}
+
+		instance.Meshes.push_back(mesh);
 	}
 
 	scene.insert(instance);
 
 	for (int i = 0; i < nd->mNumChildren; ++i)
 	{
-		addMeshRecursive(nd->mChildren[i], transformation, aMeshIDs, scene);
+		addMeshRecursive(nd->mChildren[i], transformation, aMeshIDs, aTextureIDs, pLoadedScene, scene);
 	}
 }
 
@@ -367,7 +405,7 @@ bool Importer::importObjects(Scene & scene)
 {
 	const mat4x4 identity (1.0f);
 
-	addMeshRecursive(m_pLoadedScene->mRootNode, identity, m_aMeshIDs, scene);
+	addMeshRecursive(m_pLoadedScene->mRootNode, identity, m_aMeshIDs, m_aTextureIDs, m_pLoadedScene, scene);
 
 	return(true);
 }
