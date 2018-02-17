@@ -7,7 +7,8 @@
  */
 ResourceManager::ResourceManager(void)
 {
-	// ...
+	m_iMeshCount = 0;
+	m_iTextureCount = 0;
 }
 
 /**
