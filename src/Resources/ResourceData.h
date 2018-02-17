@@ -6,18 +6,28 @@ struct VertexData
 {
 	enum Type
 	{
-		VERTEX_TYPE_POSITION,
-		VERTEX_TYPE_NORMAL,
-		VERTEX_TYPE_TANGENT,
-		VERTEX_TYPE_BITANGENT,
-		VERTEX_TYPE_COLOR0,
-		VERTEX_TYPE_TEX_COORD0,
+	        VERTEX_TYPE_POSITION = 0,
+	        VERTEX_TYPE_NORMAL = 1,
+	        VERTEX_TYPE_TANGENT = 2,
+	        VERTEX_TYPE_BITANGENT = 3,
+	        VERTEX_TYPE_COLOR0 = 4,
+	        VERTEX_TYPE_TEX_COORD0 = 5,
+
+			VERTEX_TYPE_COUNT = 6
 	};
 
+	VertexData(void) : vertexCount(0)
+	{
+		for (int i = 0; i < VERTEX_TYPE_COUNT; ++i)
+		{
+			vertices[i] = nullptr;
+			vertexFormat[i] = (VertexFormat)0; // TODO : add "unknown" Format
+		}
+	}
+
 	unsigned int vertexCount;
-	void * vertices [16];
-	VertexFormat vertexFormat [16];
-	Type vertexType [16];
+	void * vertices [VERTEX_TYPE_COUNT];
+	VertexFormat vertexFormat [VERTEX_TYPE_COUNT];
 };
 
 struct IndexData

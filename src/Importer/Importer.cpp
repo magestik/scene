@@ -249,51 +249,37 @@ bool Importer::importMeshes(Scene & scene)
 		VertexData vertexData;
 		vertexData.vertexCount = mesh->mNumVertices;
 
-		unsigned int index = 0;
-
 		if (mesh->HasPositions())
 		{
-			vertexData.vertexFormat[index] = VERTEX_FORMAT_FLOAT3;
-			vertexData.vertexType[index] = VertexData::VERTEX_TYPE_POSITION;
-			vertexData.vertices[index] = mesh->mVertices;
-			++index;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_POSITION] = VERTEX_FORMAT_FLOAT3;
+			vertexData.vertices[VertexData::VERTEX_TYPE_POSITION] = mesh->mVertices;
 		}
 
 		if (mesh->HasNormals())
 		{
-			vertexData.vertexFormat[index] = VERTEX_FORMAT_FLOAT3;
-			vertexData.vertexType[index] = VertexData::VERTEX_TYPE_NORMAL;
-			vertexData.vertices[index] = mesh->mNormals;
-			++index;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_NORMAL] = VERTEX_FORMAT_FLOAT3;
+			vertexData.vertices[VertexData::VERTEX_TYPE_NORMAL] = mesh->mNormals;
 		}
 
 		if (mesh->HasTangentsAndBitangents())
 		{
-			vertexData.vertexFormat[index] = VERTEX_FORMAT_FLOAT3;
-			vertexData.vertexType[index] = VertexData::VERTEX_TYPE_TANGENT;
-			vertexData.vertices[index] = mesh->mTangents;
-			++index;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_TANGENT] = VERTEX_FORMAT_FLOAT3;
+			vertexData.vertices[VertexData::VERTEX_TYPE_TANGENT] = mesh->mTangents;
 
-			vertexData.vertexFormat[index] = VERTEX_FORMAT_FLOAT3;
-			vertexData.vertexType[index] = VertexData::VERTEX_TYPE_BITANGENT;
-			vertexData.vertices[index] = mesh->mBitangents;
-			++index;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_BITANGENT] = VERTEX_FORMAT_FLOAT3;
+			vertexData.vertices[VertexData::VERTEX_TYPE_BITANGENT] = mesh->mBitangents;
 		}
 
 		if (mesh->HasVertexColors(0))
 		{
-			vertexData.vertexFormat[index] = VERTEX_FORMAT_FLOAT4;
-			vertexData.vertexType[index] = VertexData::VERTEX_TYPE_COLOR0;
-			vertexData.vertices[index] = mesh->mColors[0];
-			++index;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_COLOR0] = VERTEX_FORMAT_FLOAT4;
+			vertexData.vertices[VertexData::VERTEX_TYPE_COLOR0] = mesh->mColors[0];
 		}
 
 		if (mesh->HasTextureCoords(0))
 		{
-			vertexData.vertexFormat[index] = VERTEX_FORMAT_FLOAT4;
-			vertexData.vertexType[index] = VertexData::VERTEX_TYPE_COLOR0;
-			vertexData.vertices[index] = mesh->mTextureCoords[0];
-			++index;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_TEX_COORD0] = VERTEX_FORMAT_FLOAT4;
+			vertexData.vertices[VertexData::VERTEX_TYPE_TEX_COORD0] = mesh->mTextureCoords[0];
 		}
 
 		unsigned int MeshID = 0;
@@ -325,6 +311,22 @@ bool Importer::importMeshes(Scene & scene)
 		}
 
 		m_aMeshIDs.push_back(MeshID);
+
+		//
+		// Compute AABB
+		vec3 min(1e10f, 1e10f, 1e10f);
+		vec3 max(-1e10f, -1e10f, -1e10f);
+
+		for (int j = 0; j < mesh->mNumVertices; ++j)
+		{
+			min.x = _min(min.x, mesh->mVertices[j].x);
+			min.y = _min(min.y, mesh->mVertices[j].y);
+			min.z = _min(min.z, mesh->mVertices[j].z);
+
+			max.x = _max(max.x, mesh->mVertices[j].x);
+			max.y = _max(max.y, mesh->mVertices[j].y);
+			max.z = _max(max.z, mesh->mVertices[j].z);
+		}
 	}
 
 	return(true);
