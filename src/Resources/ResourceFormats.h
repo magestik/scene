@@ -2,7 +2,8 @@
 
 enum TexelFormat
 {
-	TEXEL_FORMAT_RGBA8 = 0
+	TEXEL_FORMAT_RGBA8 = 0,
+	TEXEL_FORMAT_RGB8
 };
 
 enum IndexFormat

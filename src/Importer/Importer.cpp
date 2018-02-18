@@ -198,35 +198,52 @@ bool Importer::importMaterials(Scene & scene)
 			aiString str;
 			material->GetTexture(type, 0, &str);
 
-			FIBITMAP * dib = FreeImage_Load(FIF_PNG, str.C_Str());
-
-			unsigned int bpp = FreeImage_GetBPP(dib);
-
-			unsigned int width = FreeImage_GetWidth(dib);
-			unsigned int height = FreeImage_GetHeight(dib);
-
-			void * data = FreeImage_GetBits(dib);
-
-			unsigned int TextureID = 0;
-
-			if (bpp == 8)
+			if (m_aTextureIDs.find(str.C_Str()) == m_aTextureIDs.end())
 			{
-				TextureData2D textureData;
-				textureData.width = width;
-				textureData.height = height;
-				textureData.data = data;
-				textureData.texelFormat = TEXEL_FORMAT_RGBA8;
+				std::string strPath = std::string("data/meshes/") + str.C_Str();
 
-				TextureID = scene.getResourceManager().registerTexture(textureData);
+				FIBITMAP * dib = FreeImage_Load(FIF_PNG, strPath.c_str());
+
+				unsigned int bpp = FreeImage_GetBPP(dib);
+
+				unsigned int width = FreeImage_GetWidth(dib);
+				unsigned int height = FreeImage_GetHeight(dib);
+
+				unsigned int TextureID = 0;
+
+				if (bpp == 32)
+				{
+					void * data = FreeImage_GetBits(dib);
+
+					TextureData2D textureData;
+					textureData.width = width;
+					textureData.height = height;
+					textureData.data = data;
+					textureData.texelFormat = TEXEL_FORMAT_RGBA8;
+
+					TextureID = scene.getResourceManager().registerTexture(textureData);
+				}
+				else if (bpp == 24)
+				{
+					void * data = FreeImage_GetBits(dib);
+
+					TextureData2D textureData;
+					textureData.width = width;
+					textureData.height = height;
+					textureData.data = data;
+					textureData.texelFormat = TEXEL_FORMAT_RGB8;
+
+					TextureID = scene.getResourceManager().registerTexture(textureData);
+				}
+				else
+				{
+					// TODO : handle other formats
+				}
+
+				m_aTextureIDs.insert(std::pair<std::string, unsigned int>(str.C_Str(), TextureID));
+
+				FreeImage_Unload(dib);
 			}
-			else
-			{
-				// TODO : handle other formats
-			}
-
-			m_aTextureIDs.push_back(TextureID);
-
-			FreeImage_Unload(dib);
 		}
 	}
 
@@ -338,7 +355,7 @@ bool Importer::importMeshes(Scene & scene)
  * @param parentTransformation
  * @param scene
  */
-static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformation, const std::vector<unsigned int> aMeshIDs, const std::vector<unsigned int> aTextureIDs, const aiScene * pLoadedScene, Scene & scene)
+static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformation, const std::vector<unsigned int> aMeshIDs, const std::map<std::string, unsigned int> aTextureIDs, const aiScene * pLoadedScene, Scene & scene)
 {
 	const mat4x4 transformation = parentTransformation * ASSIMP_MAT4X4(nd->mTransformation);
 
@@ -362,7 +379,18 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 		{
 			aiString str;
 			pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-			mesh.DiffuseMapID = 0; // FIXME
+
+			std::string texture_path(str.C_Str());
+			auto texture = aTextureIDs.find(texture_path);
+
+			if (texture != aTextureIDs.end())
+			{
+				mesh.DiffuseMapID = texture->second;
+			}
+			else
+			{
+				mesh.DiffuseMapID = 0;
+			}
 		}
 
 		//
@@ -370,21 +398,44 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 		{
 			aiString str;
 			pLoadedMaterial->GetTexture(aiTextureType_SPECULAR, 0, &str);
-			mesh.SpecularMapID = 0; // FIXME
+
+			std::string texture_path(str.C_Str());
+			auto texture = aTextureIDs.find(texture_path);
+
+			if (texture != aTextureIDs.end())
+			{
+				mesh.SpecularMapID = texture->second;
+			}
+			else
+			{
+				mesh.SpecularMapID = 0;
+			}
 		}
 
 		//
 		// Shininess
 		{
-			mesh.shininess = 0.0f; // FIXME
+			mesh.shininess = 1.0f;
+			pLoadedMaterial->Get(AI_MATKEY_SHININESS, mesh.shininess);
 		}
 
 		//
-		// Specular Texture
+		// Normal map
 		{
 			aiString str;
 			pLoadedMaterial->GetTexture(aiTextureType_NORMALS, 0, &str);
-			mesh.NormalMapID = 0; // FIXME
+
+			std::string texture_path(str.C_Str());
+			auto texture = aTextureIDs.find(texture_path);
+
+			if (texture != aTextureIDs.end())
+			{
+				mesh.NormalMapID = texture->second;
+			}
+			else
+			{
+				mesh.NormalMapID = 0;
+			}
 		}
 
 		instance.Meshes.push_back(mesh);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 
 class Scene;
 
@@ -30,5 +31,5 @@ private:
 	const struct aiScene * m_pLoadedScene;
 
 	std::vector<unsigned int> m_aMeshIDs;
-	std::vector<unsigned int> m_aTextureIDs;
+	std::map<std::string, unsigned int> m_aTextureIDs;
 };
