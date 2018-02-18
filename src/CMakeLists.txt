@@ -17,7 +17,7 @@ target_include_directories(scene INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Assimp
 find_package(assimp REQUIRED)
-target_link_libraries(scene PRIVATE ${ASSIMP_LIBRARIES})
+target_link_libraries(scene PRIVATE ${assimp_LIBRARIES})
 
 # FreeImage
 find_package(FreeImage REQUIRED)
