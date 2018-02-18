@@ -4,6 +4,9 @@
 
 #include "ResourceData.h"
 
+#include "../Volumes/BoundingBox.h"
+#include "../Volumes/BoundingSphere.h"
+
 class ResourceManagerListener;
 
 class ResourceManager
@@ -13,7 +16,11 @@ public:
 	ResourceManager(void);
 	~ResourceManager(void);
 
-	bool registerListener(ResourceManagerListener * listener);
+//--------------------------------------------------------------------------------------
+//		Resources
+//--------------------------------------------------------------------------------------
+
+public:
 
 	unsigned int registerMesh		(const VertexData & vertexData);
 	unsigned int registerMesh		(const VertexData & vertexData, const IndexData & indexData);
@@ -24,6 +31,37 @@ public:
 
 private:
 
+	unsigned int m_iMeshCount;
+	unsigned int m_iTextureCount;
+
+//--------------------------------------------------------------------------------------
+//		Bounding Volumes
+//--------------------------------------------------------------------------------------
+
+public:
+
+	const BoundingBox &		getBoundingBox		(unsigned int MeshID) const;
+	const BoundingSphere &	getBoundingSphere	(unsigned int MeshID) const;
+
+protected:
+
+	void computeBoundingVolumes(const VertexData & vertexData);
+
+private:
+
+	std::vector<BoundingBox>	m_aBoundingBoxes;
+	std::vector<BoundingSphere>	m_aBoundingSpheres;
+
+//--------------------------------------------------------------------------------------
+//		Listener
+//--------------------------------------------------------------------------------------
+
+public:
+
+	bool registerListener(ResourceManagerListener * listener);
+
+protected:
+
 	void onMeshImported(unsigned int MeshID, const VertexData & vertexData) const;
 	void onMeshImported(unsigned int MeshID, const VertexData & vertexData, const IndexData & indexData) const;
 
@@ -33,8 +71,6 @@ private:
 
 private:
 
-	unsigned int m_iMeshCount;
-	unsigned int m_iTextureCount;
-
 	std::vector<ResourceManagerListener*> m_aListeners;
+
 };
