@@ -1,0 +1,2 @@
+#cmakedefine HAVE_aiLightSource_AMBIENT
+#cmakedefine HAVE_aiLightSource_AREA

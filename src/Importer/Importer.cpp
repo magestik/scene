@@ -10,6 +10,8 @@
 
 #include <assert.h>
 
+#include "config.h"
+
 #define ASSIMP_MAT4X4(m) mat4x4(m.a1, m.a2, m.a3, m.a4, m.b1, m.b2, m.b3, m.b4, m.c1, m.c2, m.c3, m.c4, m.d1, m.d2, m.d3, m.d4);
 
 static const aiTextureType aSupportedTextureTypes [] = { aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_NORMALS };
@@ -129,17 +131,21 @@ bool Importer::importLights(Scene & scene)
 			}
 			break;
 
+#ifdef HAVE_aiLightSource_AMBIENT
 			case aiLightSource_AMBIENT:
 			{
 				// TODO
 			}
 			break;
+#endif // HAVE_aiLightSource_AMBIENT
 
+#ifdef HAVE_aiLightSource_AREA
 			case aiLightSource_AREA:
 			{
 				// TODO
 			}
 			break;
+#endif // HAVE_aiLightSource_AREA
 
 			default:
 			{

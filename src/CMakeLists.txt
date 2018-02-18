@@ -23,3 +23,16 @@ target_link_libraries(scene PRIVATE ${assimp_LIBRARIES})
 find_package(FreeImage REQUIRED)
 target_link_libraries(scene PRIVATE ${FreeImage_LIBRARY})
 
+unset(aiLightSource_AMBIENT_EXISTS CACHE)
+
+include(CheckCXXSourceCompiles)
+
+CHECK_CXX_SOURCE_COMPILES("#include <assimp/light.h>
+    static_assert(aiLightSource_AMBIENT == 0x4);
+    int main() { return(0); }" HAVE_aiLightSource_AMBIENT)
+
+CHECK_CXX_SOURCE_COMPILES("#include <assimp/light.h>
+    static_assert(aiLightSource_AREA == 0x5);
+    int main() { return(0); }" HAVE_aiLightSource_AREA)
+
+configure_file(config.h.in config.h)
