@@ -10,9 +10,6 @@
 
 #define ASSIMP_MAT4X4(m) mat4x4(m.a1, m.a2, m.a3, m.a4, m.b1, m.b2, m.b3, m.b4, m.c1, m.c2, m.c3, m.c4, m.d1, m.d2, m.d3, m.d4);
 
-#define _min(x, y) ((x < y) ? x : y)
-#define _max(x, y) ((x > y) ? x : y)
-
 static const aiTextureType aSupportedTextureTypes [] = { aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_NORMALS };
 
 /**
@@ -339,22 +336,6 @@ bool Importer::importMeshes(Scene & scene)
 		}
 
 		m_aMeshIDs.push_back(MeshID);
-
-		//
-		// Compute AABB
-		vec3 min(1e10f, 1e10f, 1e10f);
-		vec3 max(-1e10f, -1e10f, -1e10f);
-
-		for (int j = 0; j < mesh->mNumVertices; ++j)
-		{
-			min.x = _min(min.x, mesh->mVertices[j].x);
-			min.y = _min(min.y, mesh->mVertices[j].y);
-			min.z = _min(min.z, mesh->mVertices[j].z);
-
-			max.x = _max(max.x, mesh->mVertices[j].x);
-			max.y = _max(max.y, mesh->mVertices[j].y);
-			max.z = _max(max.z, mesh->mVertices[j].z);
-		}
 	}
 
 	return(true);
