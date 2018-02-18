@@ -298,7 +298,7 @@ bool Importer::importMeshes(Scene & scene)
 
 		if (mesh->HasTextureCoords(0))
 		{
-			vertexData.vertexFormat[VertexData::VERTEX_TYPE_TEX_COORD0] = VERTEX_FORMAT_FLOAT4;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_TEX_COORD0] = VERTEX_FORMAT_FLOAT2;
 			vertexData.vertices[VertexData::VERTEX_TYPE_TEX_COORD0] = mesh->mTextureCoords[0];
 		}
 
