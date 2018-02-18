@@ -198,51 +198,54 @@ bool Importer::importMaterials(Scene & scene)
 			aiString str;
 			material->GetTexture(type, 0, &str);
 
-			if (m_aTextureIDs.find(str.C_Str()) == m_aTextureIDs.end())
+			if (str.length > 0)
 			{
-				std::string strPath = std::string("data/meshes/") + str.C_Str();
-
-				FIBITMAP * dib = FreeImage_Load(FIF_PNG, strPath.c_str());
-
-				unsigned int bpp = FreeImage_GetBPP(dib);
-
-				unsigned int width = FreeImage_GetWidth(dib);
-				unsigned int height = FreeImage_GetHeight(dib);
-
-				unsigned int TextureID = 0;
-
-				if (bpp == 32)
+				if (m_aTextureIDs.find(str.C_Str()) == m_aTextureIDs.end())
 				{
-					void * data = FreeImage_GetBits(dib);
+					std::string strPath = std::string("data/meshes/") + str.C_Str();
 
-					TextureData2D textureData;
-					textureData.width = width;
-					textureData.height = height;
-					textureData.data = data;
-					textureData.texelFormat = TEXEL_FORMAT_RGBA8;
+					FIBITMAP * dib = FreeImage_Load(FIF_PNG, strPath.c_str());
 
-					TextureID = scene.getResourceManager().registerTexture(textureData);
+					unsigned int bpp = FreeImage_GetBPP(dib);
+
+					unsigned int width = FreeImage_GetWidth(dib);
+					unsigned int height = FreeImage_GetHeight(dib);
+
+					unsigned int TextureID = 0;
+
+					if (bpp == 32)
+					{
+						void * data = FreeImage_GetBits(dib);
+
+						TextureData2D textureData;
+						textureData.width = width;
+						textureData.height = height;
+						textureData.data = data;
+						textureData.texelFormat = TEXEL_FORMAT_RGBA8;
+
+						TextureID = scene.getResourceManager().registerTexture(textureData);
+					}
+					else if (bpp == 24)
+					{
+						void * data = FreeImage_GetBits(dib);
+
+						TextureData2D textureData;
+						textureData.width = width;
+						textureData.height = height;
+						textureData.data = data;
+						textureData.texelFormat = TEXEL_FORMAT_RGB8;
+
+						TextureID = scene.getResourceManager().registerTexture(textureData);
+					}
+					else
+					{
+						// TODO : handle other formats
+					}
+
+					m_aTextureIDs.insert(std::pair<std::string, unsigned int>(str.C_Str(), TextureID));
+
+					FreeImage_Unload(dib);
 				}
-				else if (bpp == 24)
-				{
-					void * data = FreeImage_GetBits(dib);
-
-					TextureData2D textureData;
-					textureData.width = width;
-					textureData.height = height;
-					textureData.data = data;
-					textureData.texelFormat = TEXEL_FORMAT_RGB8;
-
-					TextureID = scene.getResourceManager().registerTexture(textureData);
-				}
-				else
-				{
-					// TODO : handle other formats
-				}
-
-				m_aTextureIDs.insert(std::pair<std::string, unsigned int>(str.C_Str(), TextureID));
-
-				FreeImage_Unload(dib);
 			}
 		}
 	}
@@ -375,6 +378,15 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 		mesh.MeshID = aMeshIDs[meshIndex];
 
 		//
+		// Diffuse Color
+		{
+			aiColor3D color(0.0f, 0.0f, 0.0f);
+			pLoadedMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+
+			mesh.Kd = vec3(color.r, color.g, color.b);
+		}
+
+		//
 		// Diffuse Texture
 		{
 			aiString str;
@@ -391,6 +403,15 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 			{
 				mesh.DiffuseMapID = 0;
 			}
+		}
+
+		//
+		// Specular Color
+		{
+			aiColor3D color(0.0f, 0.0f, 0.0f);
+			pLoadedMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
+
+			mesh.Ks = vec3(color.r, color.g, color.b);
 		}
 
 		//

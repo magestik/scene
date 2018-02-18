@@ -23,9 +23,19 @@ struct Object
 		}
 
 		unsigned int MeshID;
+
+		// Diffuse color/texture
+		vec3 Kd;
 		unsigned int DiffuseMapID;
+
+		// Specular color/texture
+		vec3 Ks;
 		unsigned int SpecularMapID;
+
+		// Shininess
 		float shininess;
+
+		// Normal Map
 		unsigned int NormalMapID;
 	};
 
