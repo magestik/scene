@@ -221,7 +221,11 @@ bool Importer::importMaterials(Scene & scene)
 						textureData.width = width;
 						textureData.height = height;
 						textureData.data = data;
+#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+						textureData.texelFormat = TEXEL_FORMAT_BGRA8;
+#else
 						textureData.texelFormat = TEXEL_FORMAT_RGBA8;
+#endif // FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
 
 						TextureID = scene.getResourceManager().registerTexture(textureData);
 					}
@@ -233,7 +237,11 @@ bool Importer::importMaterials(Scene & scene)
 						textureData.width = width;
 						textureData.height = height;
 						textureData.data = data;
+#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+						textureData.texelFormat = TEXEL_FORMAT_BGR8;
+#else
 						textureData.texelFormat = TEXEL_FORMAT_RGB8;
+#endif // FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
 
 						TextureID = scene.getResourceManager().registerTexture(textureData);
 					}
@@ -298,7 +306,7 @@ bool Importer::importMeshes(Scene & scene)
 
 		if (mesh->HasTextureCoords(0))
 		{
-			vertexData.vertexFormat[VertexData::VERTEX_TYPE_TEX_COORD0] = VERTEX_FORMAT_FLOAT2;
+			vertexData.vertexFormat[VertexData::VERTEX_TYPE_TEX_COORD0] = VERTEX_FORMAT_FLOAT3;
 			vertexData.vertices[VertexData::VERTEX_TYPE_TEX_COORD0] = mesh->mTextureCoords[0];
 		}
 
