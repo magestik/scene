@@ -83,7 +83,7 @@ bool Importer::importToScene(Scene & scene)
  */
 bool Importer::importCameras(Scene & scene)
 {
-	for (int i = 0; i < m_pLoadedScene->mNumCameras; ++i)
+	for (unsigned int i = 0; i < m_pLoadedScene->mNumCameras; ++i)
 	{
 		aiCamera * camera = m_pLoadedScene->mCameras[i];
 
@@ -107,7 +107,7 @@ bool Importer::importCameras(Scene & scene)
  */
 bool Importer::importLights(Scene & scene)
 {
-	for (int i = 0; i < m_pLoadedScene->mNumLights; ++i)
+	for (unsigned int i = 0; i < m_pLoadedScene->mNumLights; ++i)
 	{
 		aiLight * light = m_pLoadedScene->mLights[i];
 
@@ -164,7 +164,7 @@ bool Importer::importLights(Scene & scene)
  */
 bool Importer::importTextures(Scene & scene)
 {
-	for (int i = 0; i < m_pLoadedScene->mNumTextures; ++i)
+	for (unsigned int i = 0; i < m_pLoadedScene->mNumTextures; ++i)
 	{
 		aiTexture * texture = m_pLoadedScene->mTextures[i];
 
@@ -194,7 +194,7 @@ bool Importer::importTextures(Scene & scene)
  */
 bool Importer::importMaterials(Scene & scene)
 {
-	for (int i = 0; i < m_pLoadedScene->mNumMaterials; ++i)
+	for (unsigned int i = 0; i < m_pLoadedScene->mNumMaterials; ++i)
 	{
 		aiMaterial * material = m_pLoadedScene->mMaterials[i];
 
@@ -275,7 +275,7 @@ bool Importer::importMeshes(Scene & scene)
 {
 	m_aMeshIDs.reserve(m_pLoadedScene->mNumMeshes);
 
-	for (int i = 0; i < m_pLoadedScene->mNumMeshes; ++i)
+	for (unsigned int i = 0; i < m_pLoadedScene->mNumMeshes; ++i)
 	{
 		aiMesh * mesh = m_pLoadedScene->mMeshes[i];
 
@@ -363,7 +363,7 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 
 	instance.transformation = transformation;
 
-	for (int i = 0; i < nd->mNumMeshes; ++i)
+	for (unsigned int i = 0; i < nd->mNumMeshes; ++i)
 	{
 		const unsigned int meshIndex = nd->mMeshes[i];
 		aiMesh * pLoadedMesh = pLoadedScene->mMeshes[meshIndex];
@@ -461,7 +461,7 @@ static void addMeshRecursive(const aiNode * nd, const mat4x4 & parentTransformat
 
 	scene.insert(instance);
 
-	for (int i = 0; i < nd->mNumChildren; ++i)
+	for (unsigned int i = 0; i < nd->mNumChildren; ++i)
 	{
 		addMeshRecursive(nd->mChildren[i], transformation, aMeshIDs, aTextureIDs, pLoadedScene, scene);
 	}
