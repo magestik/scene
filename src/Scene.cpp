@@ -247,7 +247,7 @@ bool Scene::computeBoundingVolumes(void)
 	//
 	// Update Bounding Box
 	m_BoundingBox.min = vMin;
-	m_BoundingBox.min = vMax;
+	m_BoundingBox.max = vMax;
 
 	//
 	// Update Bounding sphere
