@@ -2,6 +2,8 @@
 
 #include "ResourceManagerListener.h"
 
+#include <assert.h>
+
 #define _min(x, y) ((x < y) ? x : y)
 #define _max(x, y) ((x > y) ? x : y)
 
@@ -173,16 +175,19 @@ void ResourceManager::onTextureImported(unsigned int TextureID, const TextureDat
  */
 void ResourceManager::computeBoundingVolumes(const VertexData & vertexData)
 {
-	vec3 * vertices = (vec3*)vertexData.vertices;
+	assert(vertexData.vertices != nullptr);
+	assert(vertexData.vertexCount > 0);
+
+	vec3 * vertices = (vec3*)vertexData.vertices[VertexData::VERTEX_TYPE_POSITION];
 
 	//
 	// Compute Bounding Box
 	BoundingBox box;
 
-	box.min = vec3(1e10f, 1e10f, 1e10f);
-	box.max = vec3(-1e10f, -1e10f, -1e10f);
+	box.min = vec3(+INFINITY, +INFINITY, +INFINITY);
+	box.max = vec3(-INFINITY, -INFINITY, -INFINITY);
 
-	for (int i = 0; i < vertexData.vertexCount; ++i)
+	for (unsigned int i = 0; i < vertexData.vertexCount; ++i)
 	{
 		box.min.x = _min(box.min.x, vertices[i].x);
 		box.min.y = _min(box.min.y, vertices[i].y);
