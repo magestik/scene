@@ -31,4 +31,6 @@
 *.out
 *.app
 
+# CMake
 build/*
+.vs/*
