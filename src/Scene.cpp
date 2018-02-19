@@ -4,12 +4,24 @@
 
 #include "Importer/Importer.h"
 
+static inline vec3 _transform(const vec3 & point, const mat4x4 & matTransform)
+{
+	vec4 transformed = matTransform * vec4(point, 1.0f);
+	return(transformed.xyz / transformed.w);
+}
+
 /**
  * @brief Scene::Scene
  */
 Scene::Scene(void)
 {
 	m_pLight = new Light::Directionnal(vec3(-20.0f, -20.0f, -20.0f));
+
+	m_BoundingBox.min = vec3(0.0f, 0.0f, 0.0f);
+	m_BoundingBox.max = vec3(0.0f, 0.0f, 0.0f);
+
+	m_BoundingSphere.center = vec3(0.0f, 0.0f, 0.0f);
+	m_BoundingSphere.radius = 0.0f;
 }
 
 /**
@@ -39,7 +51,13 @@ bool Scene::registerListener(SceneListener * listener)
 bool Scene::import(const char * szFilename)
 {
 	Importer importer(szFilename);
-	return(importer.importToScene(*this));
+
+	if (!importer.importToScene(*this))
+	{
+		return(false);
+	}
+
+	return(computeBoundingVolumes());
 }
 
 /**
@@ -154,4 +172,103 @@ void Scene::onCameraRemoved(const Camera & camera) const
 	{
 		listener->onCameraRemoved(*this, camera);
 	}
+}
+
+/**
+ * @brief Scene::updateBoundingVolumes
+ */
+bool Scene::computeBoundingVolumes(void)
+{
+	vec3 vMin(+INFINITY, +INFINITY, +INFINITY);
+	vec3 vMax(-INFINITY, -INFINITY, -INFINITY);
+
+	for (const Object & object : m_aObjects)
+	{
+		for (const Object::Mesh & mesh : object.Meshes)
+		{
+			const BoundingBox & box = m_resourcesManager.getBoundingBox(mesh.MeshID);
+
+			vec3 points [8] =
+			{
+				vec3(box.min.x, box.min.y, box.min.z),
+				vec3(box.max.x, box.min.y, box.min.z),
+				vec3(box.min.x, box.max.y, box.min.z),
+				vec3(box.max.x, box.max.y, box.min.z),
+				vec3(box.min.x, box.min.y, box.max.z),
+				vec3(box.max.x, box.min.y, box.max.z),
+				vec3(box.min.x, box.max.y, box.max.z),
+				vec3(box.max.x, box.max.y, box.max.z),
+			};
+
+			for (const vec3 point : points)
+			{
+				vec3 WorldPoint = _transform(point, object.transformation);
+
+				//
+				// Min
+				if (WorldPoint.x < vMin.x)
+				{
+					vMin.x = WorldPoint.x;
+				}
+
+				if (WorldPoint.y < vMin.y)
+				{
+					vMin.y = WorldPoint.y;
+				}
+
+				if (WorldPoint.z < vMin.z)
+				{
+					vMin.z = WorldPoint.z;
+				}
+
+				//
+				// Max
+				if (WorldPoint.x > vMax.x)
+				{
+					vMax.x = WorldPoint.x;
+				}
+
+				if (WorldPoint.y > vMax.y)
+				{
+					vMax.y = WorldPoint.y;
+				}
+
+				if (WorldPoint.z > vMax.z)
+				{
+					vMax.z = WorldPoint.z;
+				}
+			}
+		}
+	}
+
+	//
+	// Update Bounding Box
+	m_BoundingBox.min = vMin;
+	m_BoundingBox.min = vMax;
+
+	//
+	// Update Bounding sphere
+
+	// TODO
+
+
+	return(true);
+}
+
+/**
+ * @brief Scene::getBoundingBox
+ * @return
+ */
+const BoundingBox & Scene::getBoundingBox(void) const
+{
+	return(m_BoundingBox);
+}
+
+/**
+ * @brief Scene::getBoundingSphere
+ * @return
+ */
+const BoundingSphere & Scene::getBoundingSphere(void) const
+{
+	return(m_BoundingSphere);
 }

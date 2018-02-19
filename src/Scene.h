@@ -4,6 +4,9 @@
 #include "Objects/Camera/Camera.h"
 #include "Objects/Light/Light.h"
 
+#include "Volumes/BoundingBox.h"
+#include "Volumes/BoundingSphere.h"
+
 #include "Resources/ResourceManager.h"
 
 #include <vector>
@@ -17,7 +20,9 @@ public:
 	Scene(void);
 	~Scene(void);
 
-	bool registerListener(SceneListener * listener);
+//--------------------------------------------------------------------------------------
+//		Objects
+//--------------------------------------------------------------------------------------
 
 	bool import(const char * szFilename);
 
@@ -37,6 +42,37 @@ public:
 		return(m_aObjects.size());
 	}
 
+public: //private:
+
+	Light::Directionnal * m_pLight; // TODO : remove this
+
+private:
+
+	std::vector<Camera> m_aCameras;
+	std::vector<Object> m_aObjects;
+
+//--------------------------------------------------------------------------------------
+//		Bounding Volumes
+//--------------------------------------------------------------------------------------
+
+public:
+
+	bool					computeBoundingVolumes	(void);
+
+	const BoundingBox &		getBoundingBox			(void) const;
+	const BoundingSphere &	getBoundingSphere		(void) const;
+
+private:
+
+	BoundingBox		m_BoundingBox;
+	BoundingSphere	m_BoundingSphere;
+
+//--------------------------------------------------------------------------------------
+//		Resource manager
+//--------------------------------------------------------------------------------------
+
+public:
+
 	inline ResourceManager & getResourceManager(void)
 	{
 		return(m_resourcesManager);
@@ -44,22 +80,26 @@ public:
 
 private:
 
+	ResourceManager m_resourcesManager;
+
+//--------------------------------------------------------------------------------------
+//		Listener
+//--------------------------------------------------------------------------------------
+
+public:
+
+	bool registerListener(SceneListener * listener);
+
+protected:
+
 	void onObjectInserted(const Object & object) const;
 	void onObjectRemoved(const Object & object) const;
 
 	void onCameraInserted(const Camera & camera) const;
 	void onCameraRemoved(const Camera & camera) const;
 
-public: //private:
-
-	Light::Directionnal * m_pLight; // TODO : remove this
-
 private:
 
-	ResourceManager m_resourcesManager;
-
-	std::vector<Camera> m_aCameras;
-	std::vector<Object> m_aObjects;
-
 	std::vector<SceneListener*> m_aListeners;
+
 };
