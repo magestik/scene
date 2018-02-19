@@ -18,10 +18,12 @@ target_include_directories(scene INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 # Assimp
 find_package(assimp REQUIRED)
 target_link_libraries(scene PRIVATE ${assimp_LIBRARIES})
+target_include_directories(scene PRIVATE ${assimp_INCLUDE_DIRS})
 
 # FreeImage
 find_package(FreeImage REQUIRED)
 target_link_libraries(scene PRIVATE ${FreeImage_LIBRARY})
+target_include_directories(scene PRIVATE ${FreeImage_INCLUDE_DIR})
 
 unset(aiLightSource_AMBIENT_EXISTS CACHE)
 
