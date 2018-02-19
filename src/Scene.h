@@ -78,6 +78,11 @@ public:
 		return(m_resourcesManager);
 	}
 
+	inline const ResourceManager & getResourceManager(void) const
+	{
+		return(m_resourcesManager);
+	}
+
 private:
 
 	ResourceManager m_resourcesManager;
