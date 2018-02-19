@@ -4,6 +4,9 @@
 
 #include "Importer/Importer.h"
 
+#define _min(x, y) ((x < y) ? x : y)
+#define _max(x, y) ((x > y) ? x : y)
+
 static inline vec3 _transform(const vec3 & point, const mat4x4 & matTransform)
 {
 	vec4 transformed = matTransform * vec4(point, 1.0f);
@@ -248,9 +251,11 @@ bool Scene::computeBoundingVolumes(void)
 
 	//
 	// Update Bounding sphere
+	m_BoundingSphere.center.x = (m_BoundingBox.max.x - m_BoundingBox.min.x) * 0.5f;
+	m_BoundingSphere.center.y = (m_BoundingBox.max.y - m_BoundingBox.min.y) * 0.5f;
+	m_BoundingSphere.center.z = (m_BoundingBox.max.z - m_BoundingBox.min.z) * 0.5f;
 
-	// TODO
-
+	m_BoundingSphere.radius = _max(distance(m_BoundingSphere.center, m_BoundingBox.min), distance(m_BoundingSphere.center, m_BoundingBox.max));
 
 	return(true);
 }
