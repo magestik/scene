@@ -12,6 +12,7 @@
 
 #if __gnu_linux__
 #	include <libgen.h>
+#	include <linux/limits.h> // PATH_MAX
 #endif // __gnu_linux__
 
 #include "config.h"
