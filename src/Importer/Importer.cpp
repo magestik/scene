@@ -10,11 +10,52 @@
 
 #include <assert.h>
 
+#if __gnu_linux__
+#	include <libgen.h>
+#	include <linux/limits.h> // PATH_MAX
+#endif // __gnu_linux__
+
 #include "config.h"
 
 #define ASSIMP_MAT4X4(m) mat4x4(m.a1, m.a2, m.a3, m.a4, m.b1, m.b2, m.b3, m.b4, m.c1, m.c2, m.c3, m.c4, m.d1, m.d2, m.d3, m.d4);
 
 static const aiTextureType aSupportedTextureTypes [] = { aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_NORMALS };
+
+static inline bool findTexturePath(const char * szModelPath, const char * szFilename, std::string & strFullPath)
+{
+	if (szModelPath == nullptr || szFilename == nullptr)
+	{
+		return(false);
+	}
+
+#if __gnu_linux__
+
+	//
+	// Already an absolute path
+	if (*szFilename == '/')
+	{
+		strFullPath = szFilename;
+		return(true);
+	}
+
+	std::string strFilename(szFilename);
+	std::replace(strFilename.begin(), strFilename.end(), '\\', '/');
+
+	char szBuffer [PATH_MAX];
+	strcpy(szBuffer, szModelPath);
+
+	const char * szDirName = dirname(szBuffer);
+
+	if (szDirName != nullptr)
+	{
+		strFullPath = std::string(szDirName) + "/" + strFilename;
+		return(true);
+	}
+
+#endif // __gnu_linux__
+
+	return(false);
+}
 
 /**
  * @brief Constructor
@@ -207,57 +248,69 @@ bool Importer::importMaterials(Scene & scene)
 			{
 				if (m_aTextureIDs.find(str.C_Str()) == m_aTextureIDs.end())
 				{
-					std::string strPath = std::string("data/meshes/") + str.C_Str();
+					std::string strPath;
 
-					FIBITMAP * dib = FreeImage_Load(FIF_PNG, strPath.c_str());
+					bool bFoundTexturePath = findTexturePath(m_szFilename, str.C_Str(), strPath);
 
-					unsigned int bpp = FreeImage_GetBPP(dib);
-
-					unsigned int width = FreeImage_GetWidth(dib);
-					unsigned int height = FreeImage_GetHeight(dib);
-
-					unsigned int TextureID = 0;
-
-					if (bpp == 32)
+					if (bFoundTexturePath)
 					{
-						void * data = FreeImage_GetBits(dib);
+						FREE_IMAGE_FORMAT format = FreeImage_GetFileType(strPath.c_str(), 0);
 
-						TextureData2D textureData;
-						textureData.width = width;
-						textureData.height = height;
-						textureData.data = data;
-#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
-						textureData.texelFormat = TEXEL_FORMAT_BGRA8;
-#else
-						textureData.texelFormat = TEXEL_FORMAT_RGBA8;
-#endif // FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+						if (format == FIF_UNKNOWN)
+						{
+							format = FreeImage_GetFIFFromFilename(strPath.c_str());
+						}
 
-						TextureID = scene.getResourceManager().registerTexture(textureData);
+						FIBITMAP * dib = FreeImage_Load(format, strPath.c_str());
+
+						unsigned int bpp = FreeImage_GetBPP(dib);
+
+						unsigned int width = FreeImage_GetWidth(dib);
+						unsigned int height = FreeImage_GetHeight(dib);
+
+						unsigned int TextureID = 0;
+
+						if (bpp == 32)
+						{
+							void * data = FreeImage_GetBits(dib);
+
+							TextureData2D textureData;
+							textureData.width = width;
+							textureData.height = height;
+							textureData.data = data;
+	#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+							textureData.texelFormat = TEXEL_FORMAT_BGRA8;
+	#else
+							textureData.texelFormat = TEXEL_FORMAT_RGBA8;
+	#endif // FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+
+							TextureID = scene.getResourceManager().registerTexture(textureData);
+						}
+						else if (bpp == 24)
+						{
+							void * data = FreeImage_GetBits(dib);
+
+							TextureData2D textureData;
+							textureData.width = width;
+							textureData.height = height;
+							textureData.data = data;
+	#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+							textureData.texelFormat = TEXEL_FORMAT_BGR8;
+	#else
+							textureData.texelFormat = TEXEL_FORMAT_RGB8;
+	#endif // FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+
+							TextureID = scene.getResourceManager().registerTexture(textureData);
+						}
+						else
+						{
+							// TODO : handle other formats
+						}
+
+						m_aTextureIDs.insert(std::pair<std::string, unsigned int>(str.C_Str(), TextureID));
+
+						FreeImage_Unload(dib);
 					}
-					else if (bpp == 24)
-					{
-						void * data = FreeImage_GetBits(dib);
-
-						TextureData2D textureData;
-						textureData.width = width;
-						textureData.height = height;
-						textureData.data = data;
-#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
-						textureData.texelFormat = TEXEL_FORMAT_BGR8;
-#else
-						textureData.texelFormat = TEXEL_FORMAT_RGB8;
-#endif // FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
-
-						TextureID = scene.getResourceManager().registerTexture(textureData);
-					}
-					else
-					{
-						// TODO : handle other formats
-					}
-
-					m_aTextureIDs.insert(std::pair<std::string, unsigned int>(str.C_Str(), TextureID));
-
-					FreeImage_Unload(dib);
 				}
 			}
 		}
