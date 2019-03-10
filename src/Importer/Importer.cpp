@@ -379,6 +379,7 @@ bool Importer::importMeshes(Scene & scene)
 			for (unsigned int j = 0; j < mesh->mNumFaces; ++j)
 			{
 				const aiFace & Face = mesh->mFaces[j];
+				assert(Face.mNumIndices == 3);
 				indices.push_back(Face.mIndices[0]);
 				indices.push_back(Face.mIndices[1]);
 				indices.push_back(Face.mIndices[2]);
