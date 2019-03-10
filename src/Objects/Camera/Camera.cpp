@@ -1,5 +1,23 @@
 #include "Camera.h"
 
+inline float cotangent(float angleInRadians)
+{
+	return(tanf(M_PI_2 - angleInRadians));
+}
+
+inline mat4x4 _perspective(float fovy, float aspect, float zNear, float zFar)
+{
+	float f = cotangent(radians(fovy * 0.5f));
+
+	mat4x4 mat;
+	mat[0] = vec4(f / aspect, 0.0f, 0.0f, 0.0f);
+	mat[1] = vec4(0.0f, f, 0.0f, 0.0f);
+	mat[2] = vec4(0.0f, 0.0f, (zFar + zNear) / (zNear - zFar), (2 * zFar * zNear) / (zNear - zFar));
+	mat[3] = vec4(0.0f, 0.0f, -1.0f, 0.0f);
+
+	return(mat);
+}
+
 static inline mat4x4 _lookAt(const vec3 & pos, const vec3 & dir, const vec3 & up)
 {
 	vec3 f = normalize(dir);
@@ -29,8 +47,13 @@ Camera::Camera()
 , m_vPos(0.0f, 0.0f, 10.0f)
 , m_vCenter(0.0f, 0.0f, 0.0f)
 , m_vUp(0.0f, 1.0f, 0.0f)
+, m_fFOV(75.0f)
+, m_fRatio(16.0f/9.0f)
+, m_fNear(0.1f)
+, m_fFar(2147483647.0f) // int max
 {
 	LookAt(m_vPos, m_vCenter, m_vUp);
+	updateProjection();
 }
 
 /**
@@ -130,4 +153,10 @@ const mat4x4 & Camera::getViewMatrix(void) const
 	return(m_matView);
 }
 
-
+/**
+ * @brief Camera::updateProjection
+ */
+void Camera::updateProjection(void)
+{
+	m_matProjection = _perspective(m_fFOV, m_fRatio, m_fNear, m_fFar);
+}
