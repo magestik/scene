@@ -46,6 +46,22 @@ public: //private:
 
 	Light::Directionnal * m_pLight; // TODO : remove this
 
+	vec3 m_vAmbientColor;
+
+	struct Fog
+	{
+		Fog(void) : Color(0.8f, 0.8f, 0.8f), Scattering(0.35f), Extinction(0.35f)
+		{
+			// ...
+		}
+
+		vec3 Color;
+		float Scattering;
+		float Extinction;
+	};
+
+	Fog fog;
+
 private:
 
 	std::vector<Camera> m_aCameras;

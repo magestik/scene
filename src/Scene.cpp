@@ -19,6 +19,7 @@ static inline vec3 _transform(const vec3 & point, const mat4x4 & matTransform)
 Scene::Scene(void)
 {
 	m_pLight = new Light::Directionnal(vec3(-20.0f, -20.0f, -20.0f));
+	m_vAmbientColor = vec3(0.0f, 0.0f, 0.0f);
 
 	m_BoundingBox.min = vec3(0.0f, 0.0f, 0.0f);
 	m_BoundingBox.max = vec3(0.0f, 0.0f, 0.0f);
