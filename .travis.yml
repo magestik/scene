@@ -4,22 +4,20 @@ matrix:
   include:
   - os: linux
     compiler: gcc
-    before_install:
-    - sudo apt-get update -qq -y
-    - sudo apt-get install libassimp-dev
-    - sudo apt-get install libfreeimage-dev
   - os: linux
     compiler: clang
-    before_install:
-    - sudo apt-get update -qq -y
-    - sudo apt-get install libassimp-dev
-    - sudo apt-get install libfreeimage-dev
   - os: osx
     compiler: clang
-    before_install:
-    - brew update
-    - brew install assimp
-    - brew install freeimage
+
+addons:
+  apt:
+    packages:
+      - libassimp-dev
+      - libfreeimage-dev
+  homebrew:
+    packages:
+      - assimp
+      - freeimage
 
 before_script:  
     - mkdir build
