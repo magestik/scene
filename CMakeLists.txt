@@ -10,7 +10,9 @@ endif ()
 
 add_subdirectory(external)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
+if (NOT VCPKG_TOOLCHAIN)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
+endif (NOT VCPKG_TOOLCHAIN)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
